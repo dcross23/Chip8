@@ -198,6 +198,11 @@ public class CPU {
                          * set to 1, otherwise 0. Only the lowest 8 bits of the 
                          * result are kept, and stored in Vx
                          */
+                        short result = (short) (regBank.V[x] + regBank.V[y]);
+                        if(result > 0x00FF) regBank.V[0xF] = 0x1;
+                        else                regBank.V[0xF] = 0x0;
+                        
+                        regBank.V[x] = (byte) (result & 0x00FF);
                         break;
 
                     case 0x5:
@@ -206,6 +211,10 @@ public class CPU {
                          * If Vx ¿ Vy, then VF is set to 1, otherwise 0. Then Vy 
                          * is subtracted from Vx, and the results stored in Vx.
                          */
+                        if(regBank.V[x] > regBank.V[y])  regBank.V[0xF] = 0x1;                           
+                        else                             regBank.V[0xF] = 0x0;
+                        
+                        regBank.V[x] -= regBank.V[y];
                         break;
 
                     case 0x6:
@@ -214,6 +223,10 @@ public class CPU {
                          * If the least-significant bit of Vx is 1, then VF is set 
                          * to 1, otherwise 0. Then Vx is divided by 2.
                          */
+                        regBank.V[0xF] = (byte) (regBank.V[x] & 0x01);
+                        
+                        //Divide V[x] by 2. It does it moving all bits to the right 1 position
+                        regBank.V[x] = (byte) (regBank.V[x] >> 1); 
                         break;
 
                     case 0x7:
@@ -222,6 +235,9 @@ public class CPU {
                          * If Vy ¿ Vx, then VF is set to 1, otherwise 0. Then Vx is 
                          * subtracted from Vy, and the results stored in Vx.
                          */
+                        regBank.V[0xF] = (byte) (regBank.V[y] > regBank.V[x] ? 0x1 : 0x0);
+                        
+                        regBank.V[x] = (byte) (regBank.V[y] - regBank.V[x]);
                         break;
 
                     case 0xE:
@@ -230,6 +246,14 @@ public class CPU {
                          * If the most-significant bit of Vx is 1, then VF is set 
                          * to 1, otherwise to 0. Then Vx is multiplied by 2.
                          */
+                        
+                        //Mask to get the most significant bit of a byte :
+                        // 0x80 = 1000 0000 
+                        
+                        regBank.V[0xF] = (byte) (regBank.V[x] & 0x80);
+                        
+                        //Multiply V[x] by 2. It does it moving all bits to the left 1 position
+                        regBank.V[x] = (byte) (regBank.V[x] << 1);
                         break;
                 }
                 break;
@@ -240,8 +264,11 @@ public class CPU {
                  * The values of Vx and Vy are compared, and if they are not equal, 
                  * the program counter is increased by 2.
                  */
-                
-                //if(n == 0)
+                //Check if the opcode is 9__0 and not 9__t with t!=0
+                if(n == 0){
+                    if(regBank.V[x] != regBank.V[y])  
+                        incrementPC();                
+                }
                 break;
             
             case 0xA:
@@ -249,6 +276,7 @@ public class CPU {
                  * LD I, addr -> Set I = nnn (Annn). 
                  * The value of register I is set to nnn
                  */
+                regBank.I = nnn;
                 break;
 
             case 0xB:
@@ -256,6 +284,8 @@ public class CPU {
                  * JP V0, addr -> Jump to location nnn + V0 (Bnnn). 
                  * The program counter is set to nnn plus the value of V0.
                  */
+                //If pc > 0xFFF, returns back to the start;
+                regBank.PC = (short) ((nnn + regBank.V[0]) & 0xFFF);
                 break;
 
             case 0xC:
@@ -264,7 +294,6 @@ public class CPU {
                  * The interpreter generates a random number from 0 to 255, 
                  * which is then ANDed with the value kk. The results are stored 
                  * in Vx. See instruction 8xy2 for more information on AND.
-
                  */
                 break;
                 
@@ -313,6 +342,7 @@ public class CPU {
                          * LD Vx, DT -> Set Vx = delay timer value (Fx07). 
                          * The value of DT is placed into Vx.
                          */
+                        regBank.V[x] = regBank.DT;
                         break;
                         
                     case 0x000A:
@@ -329,6 +359,7 @@ public class CPU {
                          * LD DT, Vx -> Set delay timer = Vx (Fx15).  
                          * Delay Timer is set equal to the value of Vx.
                          */
+                        regBank.DT = regBank.V[x];
                         break;
                         
                     case 0x0018:
@@ -336,6 +367,7 @@ public class CPU {
                          * LD ST, Vx -> Set sound timer = Vx (Fx18). 
                          * Sound Timer is set equal to the value of Vx.
                          */
+                        regBank.ST = regBank.V[x];
                         break;
                         
                     case 0x001E:
@@ -344,6 +376,7 @@ public class CPU {
                          * The values of I and Vx are added, and the results 
                          * are stored in I
                          */
+                        regBank.I += regBank.V[x];
                         break;
                         
                     case 0x0029:
