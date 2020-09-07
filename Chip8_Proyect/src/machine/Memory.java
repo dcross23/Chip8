@@ -16,12 +16,20 @@ public class Memory {
     private short[] stack;
     
     /**
+     * Screen pixels : true = white, false = black.
+     */
+    public boolean pixels[][];
+    
+    
+    /**
      * Constructor - Initializes the Memory with a specific size.
      * @param size 
      */
     public Memory(int size){
         this.mem = new byte[size];
         this.stack = new short[16];
+        this.pixels = new boolean[64][32];
+       
     }
     
     /**
@@ -72,7 +80,5 @@ public class Memory {
         }
     }
     
-    
-    
-    
+ 
 }

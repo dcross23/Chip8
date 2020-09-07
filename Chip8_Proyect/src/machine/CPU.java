@@ -52,6 +52,7 @@ public class CPU {
                         /** 
                          * CLS -> clears the display (00E0). 
                          */
+                        
                       break;
                         
                     case 0x0EE:
