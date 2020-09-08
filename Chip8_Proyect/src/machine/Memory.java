@@ -20,6 +20,33 @@ public class Memory {
      */
     public boolean pixels[][];
     
+    /**
+     * Flag to control when drawing the screen.
+     */
+    public boolean drawScreen;
+    
+    /**
+     * All sprites from 0 to F.
+     */
+    private static byte sprites[][] = {
+        new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0},    //SPRITE_0 
+        new byte[]{(byte)0x20,(byte)0x60,(byte)0x20,(byte)0x20,(byte)0x70},    //SPRITE_1
+        new byte[]{(byte)0xF0,(byte)0x10,(byte)0xF0,(byte)0x80,(byte)0xF0},    //SPRITE_2
+        new byte[]{(byte)0xF0,(byte)0x10,(byte)0xF0,(byte)0x10,(byte)0xF0},    //SPRITE_3
+        new byte[]{(byte)0x90,(byte)0x90,(byte)0xF0,(byte)0x10,(byte)0x10},    //SPRITE_4
+        new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x10,(byte)0xF0},    //SPRITE_5
+        new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x90,(byte)0xF0},    //SPRITE_6
+        new byte[]{(byte)0xF0,(byte)0x10,(byte)0x20,(byte)0x40,(byte)0x40},    //SPRITE_7
+        new byte[]{(byte)0xF0,(byte)0x90,(byte)0xF0,(byte)0x90,(byte)0xF0},    //SPRITE_8
+        new byte[]{(byte)0xF0,(byte)0x90,(byte)0xF0,(byte)0x10,(byte)0xF0},    //SPRITE_9
+        new byte[]{(byte)0xF0,(byte)0x90,(byte)0xF0,(byte)0x90,(byte)0x90},    //SPRITE_A
+        new byte[]{(byte)0xE0,(byte)0x90,(byte)0xE0,(byte)0x90,(byte)0xE0},    //SPRITE_B
+        new byte[]{(byte)0xF0,(byte)0x80,(byte)0x80,(byte)0x80,(byte)0xF0},    //SPRITE_C
+        new byte[]{(byte)0xE0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xE0},    //SPRITE_D
+        new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x80,(byte)0xF0},    //SPRITE_E
+        new byte[]{(byte)0xF0,(byte)0x80,(byte)0xF0,(byte)0x80,(byte)0x80},    //SPRITE_F        
+    };
+    
     
     /**
      * Constructor - Initializes the Memory with a specific size.
@@ -29,7 +56,7 @@ public class Memory {
         this.mem = new byte[size];
         this.stack = new short[16];
         this.pixels = new boolean[64][32];
-       
+        this.drawScreen = false; 
     }
     
     /**

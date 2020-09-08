@@ -52,7 +52,12 @@ public class CPU {
                         /** 
                          * CLS -> clears the display (00E0). 
                          */
-                        
+                        for(int i=0; i<64; i++){
+                            for(int j=0; j<32; j++){
+                                mem.pixels[i][j] = false;
+                            }
+                        }
+                        mem.drawScreen = true;
                       break;
                         
                     case 0x0EE:
@@ -281,6 +286,39 @@ public class CPU {
                  * If the sprite is positioned so part of it is outside the coordinates 
                  * of the display, it wraps around to the opposite side of the screen.
                  */
+                regBank.V[0xF] = 0x0;
+                for(int i=0; i<n; i++){
+                    byte sprite = mem.get((short) (regBank.I + i));
+                    
+                    for(int j=0; j<8; j++){
+                        //Using 63 = 0011 1111 = 0x3F mask, 
+                        // the sprite with wrap around the screen width 
+                        int px = (regBank.V[x] + j) & 63;
+                        
+                        //Using 31 = 0001 1111 = 0x1F mask, 
+                        // the sprite with wrap around the screen height 
+                        int py = (regBank.V[y] + i) & 31;
+                        
+                        boolean prevPixel = mem.pixels[px][py];
+                       
+                        //Mask that gets the bit "i" starting from the left 
+                        byte mask = (byte) (1 << (7-i));
+                        
+                        //Now it gets the bit "i" from sprite using the mask and compares it
+                        // to 0 (if it is !=0, pixel is switched on and the comparation will
+                        // return true). Then, this value true/false from the bit "i" of the 
+                        // sprite is XOR`d with the previous pixel in the screen.
+                        boolean newPixel = prevPixel ^ ((sprite & mask) != 0); //XOR
+                        
+                        mem.pixels[px][py] = newPixel;
+                        
+                        //If a pixel has been erased, V[F] = 1.
+                        if(prevPixel == true && newPixel == false) 
+                            regBank.V[0xF] = 0x1;                                                           
+                    }
+                }
+                
+                mem.drawScreen = true;
                 break;
 
                 
@@ -308,7 +346,7 @@ public class CPU {
 
                 
             case 0xF:
-                switch( (short) (kk & 0x00FF) ){
+                switch( (short) (kk & 0xFF) ){
                     case 0x0007:
                         /**
                          * LD Vx, DT -> Set Vx = delay timer value (Fx07). 
