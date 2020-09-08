@@ -28,6 +28,7 @@ public class Memory {
     /**
      * All sprites from 0 to F.
      */
+    public static short spritesStartAddress = 0x0000;
     private static byte sprites[][] = {
         new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0},    //SPRITE_0 
         new byte[]{(byte)0x20,(byte)0x60,(byte)0x20,(byte)0x20,(byte)0x70},    //SPRITE_1
@@ -108,4 +109,58 @@ public class Memory {
     }
     
  
+    /**
+     * Loads the default sprites in memory. 
+     */
+    private void loadSpritesOnMemory(){
+        for(int i=0; i<sprites[0x0].length; i++){
+            set((short) (spritesStartAddress + i),sprites[0x0][i]);
+        }
+        for(int i=0; i<sprites[0x1].length; i++){
+            set((short) (spritesStartAddress +5 + i),sprites[0x1][i]);
+        }
+        for(int i=0; i<sprites[0x2].length; i++){
+            set((short) (spritesStartAddress +10 + i),sprites[0x2][i]);
+        }
+        for(int i=0; i<sprites[0x3].length; i++){
+            set((short) (spritesStartAddress +15 + i),sprites[0x3][i]);
+        }
+        for(int i=0; i<sprites[0x4].length; i++){
+            set((short) (spritesStartAddress +20 + i),sprites[0x4][i]);
+        }
+        for(int i=0; i<sprites[0x5].length; i++){
+            set((short) (spritesStartAddress +25 + i),sprites[0x5][i]);
+        }
+        for(int i=0; i<sprites[0x6].length; i++){
+            set((short) (spritesStartAddress +30 + i),sprites[0x6][i]);
+        }
+        for(int i=0; i<sprites[0x7].length; i++){
+            set((short) (spritesStartAddress +35 + i),sprites[0x7][i]);
+        }
+        for(int i=0; i<sprites[0x8].length; i++){
+            set((short) (spritesStartAddress +40 + i),sprites[0x8][i]);
+        }
+        for(int i=0; i<sprites[0x9].length; i++){
+            set((short) (spritesStartAddress +45 + i),sprites[0x9][i]);
+        }
+        for(int i=0; i<sprites[0xA].length; i++){
+            set((short) (spritesStartAddress +50 + i),sprites[0xA][i]);
+        }
+        for(int i=0; i<sprites[0xB].length; i++){
+            set((short) (spritesStartAddress +55 + i),sprites[0xB][i]);
+        }
+        for(int i=0; i<sprites[0xC].length; i++){
+            set((short) (spritesStartAddress +60 + i),sprites[0xC][i]);
+        }
+        for(int i=0; i<sprites[0xD].length; i++){
+            set((short) (spritesStartAddress +65 + i),sprites[0xD][i]);
+        }
+        for(int i=0; i<sprites[0xE].length; i++){
+            set((short) (spritesStartAddress +70 + i),sprites[0xE][i]);
+        }
+        for(int i=0; i<sprites[0xF].length; i++){
+            set((short) (spritesStartAddress +75 + i),sprites[0xF][i]);
+        }
+        
+    }
 }
