@@ -1,5 +1,8 @@
 package main;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import machine.Chip8;
 
 /**
@@ -12,8 +15,16 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Chip8 chip8 = new Chip8();
+        String rom = "PONG";       
         
+        try {
+            Chip8 chip8 = new Chip8();
+            chip8.loadRom(rom);
+            chip8.startEmulationLoop();
+            
+        } catch (IOException | InterruptedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

@@ -8,12 +8,12 @@ public class Memory {
     /**
      * Memory. 
      */
-    private byte[] mem;
+    private final byte[] mem;
     
     /**
      * Stack. 
      */
-    private short[] stack;
+    private final short[] stack;
     
     /**
      * Screen pixels : true = white, false = black.
@@ -28,8 +28,8 @@ public class Memory {
     /**
      * All sprites from 0 to F.
      */
-    public static short spritesStartAddress = 0x0000;
-    private static byte sprites[][] = {
+    public final short spritesStartAddress = 0x0000;
+    private static final byte sprites[][] = {
         new byte[]{(byte)0xF0,(byte)0x90,(byte)0x90,(byte)0x90,(byte)0xF0},    //SPRITE_0 
         new byte[]{(byte)0x20,(byte)0x60,(byte)0x20,(byte)0x20,(byte)0x70},    //SPRITE_1
         new byte[]{(byte)0xF0,(byte)0x10,(byte)0xF0,(byte)0x80,(byte)0xF0},    //SPRITE_2
@@ -58,6 +58,8 @@ public class Memory {
         this.stack = new short[16];
         this.pixels = new boolean[64][32];
         this.drawScreen = false; 
+        
+        loadSpritesOnMemory();
     }
     
     /**
@@ -108,7 +110,16 @@ public class Memory {
         }
     }
     
- 
+    /**
+     * Prints the memory content and addresses. 
+     */
+    public void printMemory(){
+        for(int i=0; i<this.mem.length; i++){
+            System.out.printf("%02x -> 0x%04x\n",this.mem[i],i);
+        }
+    }
+    
+    
     /**
      * Loads the default sprites in memory. 
      */

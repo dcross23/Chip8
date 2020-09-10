@@ -1,15 +1,29 @@
 package machine;
 
+import java.util.Random;
+
 /**
- *
+ * 
  * @author David
  */
 public class CPU {
-    RegisterBank regBank;
-    Memory mem;
+    /**
+     * Memory and Register Bank.
+     */
+    private final RegisterBank regBank;
+    private final Memory mem;
     
-    short opcode;
+    /**
+     * Current opcode readed.
+     */
+    private short opcode;
     
+    
+    /**
+     * Constructor - Creates a new CPU with a Memory and a Register Bank.
+     * @param memory
+     * @param registerBank 
+     */
     public CPU(Memory memory, RegisterBank registerBank){
         this.regBank = registerBank;
         this.mem = memory;
@@ -17,7 +31,7 @@ public class CPU {
     
     
     /**
-     * Gets the next opcode from memory using pc. 
+     * Gets the next opcode from mem using pc. 
      */
     public void getNextOpcode(){
         short firstByte = (short) (mem.get(regBank.PC) << 8);
@@ -145,8 +159,6 @@ public class CPU {
                  * Adds the value kk to the value of register Vx, 
                  * then stores the result in Vx.
                  */
-                //Dont need mask, Java does this automatically if case there
-                //  is sum carry
                 regBank.V[x] += kk;
                 break;
 
@@ -254,8 +266,7 @@ public class CPU {
                          */
                         
                         //Mask to get the most significant bit of a byte :
-                        // 0x80 = 1000 0000 
-                        
+                        // 0x80 = 1000 0000                         
                         regBank.V[0xF] = (byte) (regBank.V[x] & 0x80);
                         
                         //Multiply V[x] by 2. It does it moving all bits to the left 1 position
@@ -270,7 +281,7 @@ public class CPU {
                  * The values of Vx and Vy are compared, and if they are not equal, 
                  * the program counter is increased by 2.
                  */
-                //Check if the opcode is 9__0 and not 9__t with t!=0
+                //Check if the opcode is 9xy0 and not 9xyt with t!=0
                 if(n == 0){
                     if(regBank.V[x] != regBank.V[y])  
                         incrementPC();                
@@ -301,6 +312,8 @@ public class CPU {
                  * which is then ANDed with the value kk. The results are stored 
                  * in Vx. See instruction 8xy2 for more information on AND.
                  */
+                byte randomByte = (byte) new Random(System.currentTimeMillis()).nextInt(256);
+                regBank.V[x] = (byte) (randomByte & kk);
                 break;
                 
             case 0xD:
@@ -315,18 +328,18 @@ public class CPU {
                  * If the sprite is positioned so part of it is outside the coordinates 
                  * of the display, it wraps around to the opposite side of the screen.
                  */
-                regBank.V[0xF] = 0x0;
-                for(int i=0; i<n; i++){
-                    byte sprite = mem.get((short) (regBank.I + i));
+                regBank.V[0xF] = 0x00;
+                for(int j=0; j<n; j++){
+                    byte Sprite = mem.get((short) (regBank.I + j));
                     
-                    for(int j=0; j<8; j++){
+                    for(int i = 0; i <=7; i++){
                         //Using 63 = 0011 1111 = 0x3F mask, 
                         // the sprite with wrap around the screen width 
-                        int px = (regBank.V[x] + j) & 63;
+                        int px = (regBank.V[x] + i) & 63;
                         
                         //Using 31 = 0001 1111 = 0x1F mask, 
                         // the sprite with wrap around the screen height 
-                        int py = (regBank.V[y] + i) & 31;
+                        int py = (regBank.V[y] + j) & 31;
                         
                         boolean prevPixel = mem.pixels[px][py];
                        
@@ -337,13 +350,14 @@ public class CPU {
                         // to 0 (if it is !=0, pixel is switched on and the comparation will
                         // return true). Then, this value true/false from the bit "i" of the 
                         // sprite is XOR`d with the previous pixel in the screen.
-                        boolean newPixel = prevPixel ^ ((sprite & mask) != 0); //XOR
+                        boolean newPixel = prevPixel ^ ((Sprite & mask) != 0); //XOR
                         
                         mem.pixels[px][py] = newPixel;
                         
                         //If a pixel has been erased, V[F] = 1.
-                        if(prevPixel == true && newPixel == false) 
-                            regBank.V[0xF] = 0x1;                                                           
+                        if(prevPixel == true && newPixel == false){
+                                regBank.V[0xF] = 0x01;
+                        }                                                           
                     }
                 }
                 
@@ -424,17 +438,31 @@ public class CPU {
                          * The value of I is set to the location for the hexadecimal 
                          * sprite corresponding to the value of Vx. 
                          */
+                        //Mask with 0xF to get only a number from 0 to F in case V[x] > 0xF
+                        regBank.I = (short) (mem.spritesStartAddress + (regBank.V[x] & 0xF) * 5);
                         break;
                     
                     case 0x0033:
                         /**
                          * LD B, Vx -> Store BCD representation of Vx in memory 
-                         *             locations I, I+1, and I+ (Fx33). 
+                         *             locations I, I+1, and I+2 (Fx33). 
                          * The interpreter takes the decimal value of Vx, and 
                          * places the hundreds digit in memory at location in I, 
                          * the tens digit at location I+1, and the ones digit at 
                          * location I+2.
                          */
+                        int vx = regBank.V[x];
+                        int hundreds = vx / 100;
+                        vx = vx % 100;
+                        
+                        int tens = vx /10;
+                        vx = vx % 10;
+                                
+                        int ones = vx;                
+                         
+                        mem.set((short) (regBank.I  ) ,(byte) hundreds); 
+                        mem.set((short) (regBank.I+1), (byte) tens); 
+                        mem.set((short) (regBank.I+2), (byte) ones); 
                         break;
                         
                     case 0x0055:
@@ -443,6 +471,9 @@ public class CPU {
                          *               address I (Fx55).
                          * I is then set to I + x + 1.
                          */
+                        for(int reg=0; reg<=x; reg++){
+                            mem.set((short) (regBank.I + reg), regBank.V[reg]);
+                        }
                         break;
                         
                     case 0x0065:
@@ -451,6 +482,9 @@ public class CPU {
                          *               starting at address I (Fx65). 
                          * I is then set to I + x + 1.
                          */
+                        for(int reg=0; reg<=x; reg++){
+                            regBank.V[reg] = mem.get((short) (regBank.I + reg));
+                        }
                         break;   
                 }
             break;         
@@ -459,7 +493,7 @@ public class CPU {
     
     
     /**
-     * Prints the opcode readed.
+     * Prints the opcodes readed.
      */
     public void printOpcode(){
         short nnn = extractNNN(opcode);
