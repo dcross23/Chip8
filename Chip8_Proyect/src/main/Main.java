@@ -15,11 +15,12 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String rom = "PONG";       
+        String rom = "TICTAC";       
         
         try {
             Chip8 chip8 = new Chip8();
-            chip8.loadRom(rom);
+            chip8.loadRom(rom.toUpperCase());
+            
             chip8.startEmulationLoop();
             
         } catch (IOException | InterruptedException ex) {

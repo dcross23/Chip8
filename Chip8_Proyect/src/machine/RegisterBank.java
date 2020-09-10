@@ -1,7 +1,7 @@
 package machine;
 
 /**
- *
+ * Class that manages al registers.
  * @author david
  */
 public class RegisterBank {

@@ -1,6 +1,8 @@
 package machine;
 
+import inputOutput.KeyBoard;
 import inputOutput.Screen;
+import inputOutput.Sound;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
@@ -10,7 +12,7 @@ import javax.swing.JFrame;
 
 
 /**
- *
+ * Class that represents Chip8.
  * @author David
  */
 public class Chip8 {      
@@ -35,6 +37,14 @@ public class Chip8 {
     private Screen screen;
     
     /**
+     * Chip8 16 digit keyboard.
+     */
+    KeyBoard keyboard;
+    
+    Sound sound;
+    
+    
+    /**
      * Size of the loaded rom.
      */
     private int romSize;
@@ -45,7 +55,9 @@ public class Chip8 {
     public Chip8(){
         this.memory = new Memory(MEMSIZE);
         this.registerBank = new RegisterBank();
-        this.cpu = new CPU(this.memory, this.registerBank);    
+        this.keyboard = new KeyBoard();    
+        this.sound = new Sound(true);
+        this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
         System.out.println("[CHIP-8] Chip-8 components correctly initialized.");
         
         createGUI();
@@ -59,12 +71,15 @@ public class Chip8 {
     private void createGUI(){
         JFrame frame = new JFrame("Chip-8");
         
+        //Add keyboard as key listener
+        frame.addKeyListener(keyboard);
+        
         // Set frame location to the middle of the screen
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(d.width/2 - SCREEN_WIDTH/2, d.height/2 - SCREEN_HEIGHT/2);
         
         // New Screen pannel instance 
-        screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);          
+        screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);  
         frame.setContentPane(screen);
         frame.pack();
         
@@ -127,10 +142,10 @@ public class Chip8 {
 
                 //6.- Decrement ST. 
                 if(registerBank.ST > 0){
-                    //TODO : start sound
+                    sound.startSound();
                     registerBank.ST = (byte)(registerBank.ST - 0x01);
                     if(registerBank.ST == 0){
-                        //TODO : stop sound
+                        sound.stopSound();
                     }
                 }
                 
@@ -141,7 +156,7 @@ public class Chip8 {
         }
     }
    
-    
+
     /**
      * Print loaded rom from 0x200 to romSize.
      */

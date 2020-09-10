@@ -1,9 +1,10 @@
 package machine;
 
+import inputOutput.KeyBoard;
 import java.util.Random;
 
 /**
- * 
+ * Class that manages CPU (processes opcodes).
  * @author David
  */
 public class CPU {
@@ -14,19 +15,25 @@ public class CPU {
     private final Memory mem;
     
     /**
+     * Chip8 keyboard.
+     */
+    private final KeyBoard keyboard;
+    
+    /**
      * Current opcode readed.
      */
     private short opcode;
     
     
     /**
-     * Constructor - Creates a new CPU with a Memory and a Register Bank.
+     * Constructor - Creates a new CPU with a Memory, a Register Bank and a KeyBoard.
      * @param memory
      * @param registerBank 
      */
-    public CPU(Memory memory, RegisterBank registerBank){
+    public CPU(Memory memory, RegisterBank registerBank, KeyBoard keyboard){
         this.regBank = registerBank;
         this.mem = memory;
+        this.keyboard = keyboard;
     }
     
     
@@ -374,6 +381,9 @@ public class CPU {
                          * Checks the keyboard, and if the key corresponding to the value 
                          * of Vx is currently in the down position, PC is increased by 2.
                          */
+                        if(keyboard.isPressed((byte) (regBank.V[x] & 0xF))){
+                            incrementPC();
+                        }
                         break;
                         
                     case 0x00A1:
@@ -383,6 +393,9 @@ public class CPU {
                          * Checks the keyboard, and if the key corresponding to the value 
                          * of Vx is currently in the up position, PC is increased by 2.
                          */
+                        if(!keyboard.isPressed((byte) (regBank.V[x] & 0xF))){
+                            incrementPC();
+                        }
                         break;
                 }
                 break;
@@ -405,7 +418,9 @@ public class CPU {
                          * All execution stops until a key is pressed, then the 
                          * value of that key is stored in Vx.
                          */
-                        break;
+                        byte key = keyboard.waitForKey();
+                        regBank.V[x] = (byte) (key & 0xF); 
+                       break;
                         
                     case 0x0015:
                         /**

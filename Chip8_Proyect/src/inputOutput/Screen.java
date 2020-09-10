@@ -11,14 +11,30 @@ import machine.Memory;
  * @author david
  */
 public class Screen extends JPanel{
-       
+    /**
+     * Screen config (width, height and scale).
+     */
     int scale; 
     int width; 
     int height;
     
+    /**
+     * Graphics to paint in the screen.
+     */
     private Graphics g;
+    
+    /**
+     * Chip8 memory to obtain the pixels.
+     */
     private final Memory mem;
     
+    /**
+     * Constructor - creates a new Screen.
+     * @param mem - Memory where pixels are saved
+     * @param scale
+     * @param width
+     * @param height 
+     */
     public Screen(Memory mem, int scale, int width, int height){
         super(null);
         this.mem = mem;

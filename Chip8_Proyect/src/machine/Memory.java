@@ -1,7 +1,7 @@
 package machine;
 
 /**
- *
+ * Class that manages the memory.
  * @author David
  */
 public class Memory {
