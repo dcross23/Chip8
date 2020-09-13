@@ -15,11 +15,12 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        String rom = "TICTAC";       
+        String rom = "PONG";     
+        String arduinoPort = "COM3";
         
         try {
-            Chip8 chip8 = new Chip8();
-            chip8.loadRom(rom.toUpperCase());
+            Chip8 chip8 = new Chip8(arduinoPort);
+            chip8.loadRom(rom);
             
             chip8.startEmulationLoop();
             

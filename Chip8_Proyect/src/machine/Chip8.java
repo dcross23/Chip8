@@ -37,12 +37,17 @@ public class Chip8 {
     private Screen screen;
     
     /**
-     * Chip8 16 digit keyboard.
+     * Chip8 16 digit keyboard. 
+     * Posibility to add Arduino keypad as keyboard.
      */
-    KeyBoard keyboard;
+    private KeyBoard keyboard;
+    private boolean addArduino = true;
     
-    Sound sound;
-    
+    /**
+     * Chip8 sound.
+     */
+    private Sound sound;
+    private boolean soundOn = false;
     
     /**
      * Size of the loaded rom.
@@ -56,7 +61,24 @@ public class Chip8 {
         this.memory = new Memory(MEMSIZE);
         this.registerBank = new RegisterBank();
         this.keyboard = new KeyBoard();    
-        this.sound = new Sound(true);
+        this.sound = new Sound(soundOn);
+        this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
+        System.out.println("[CHIP-8] Chip-8 components correctly initialized.");
+        
+        createGUI();
+        
+        System.out.println("[CHIP-8] Chip-8 system correctly initialized.");
+    }
+    
+    /**
+     * Constructor - Creates Chip8 supporting Arduino Keypad input.
+     * @param arduinoPort Port where Arduino has been conected
+     */
+    public Chip8(String arduinoPort){
+        this.memory = new Memory(MEMSIZE);
+        this.registerBank = new RegisterBank();
+        this.keyboard = new KeyBoard(arduinoPort);    
+        this.sound = new Sound(soundOn);
         this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
         System.out.println("[CHIP-8] Chip-8 components correctly initialized.");
         

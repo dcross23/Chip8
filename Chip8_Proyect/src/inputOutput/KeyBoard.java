@@ -1,19 +1,23 @@
 package inputOutput;
 
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
 /*
- * ORIGINAL:            MAPPED:              
- * 1 2 3 C              1 2 3 4
- * 4 5 6 D              Q W E R
- * 7 8 9 E              A S D F
- * A 0 B F              Z X C V
+ * ORIGINAL:           KEYBOARD:            ARDUINO:         
+ * 1 2 3 C              1 2 3 4             1 2 3 A
+ * 4 5 6 D              Q W E R             4 5 6 B
+ * 7 8 9 E              A S D F             7 8 9 C
+ * A 0 B F              Z X C V             * 0 # D
  */
 
 /**
  * Class that manages the keyboard.
+ * It supports Arduino input from a 4x4 keypad
  * @author David
  */
 public class KeyBoard implements KeyListener{
@@ -31,6 +35,16 @@ public class KeyBoard implements KeyListener{
      * Last key that was pressed.
      */
     private byte lastPressed;
+        
+    /**
+     * SerialPort to receive data from Arduino.
+     */
+    private SerialPort sp;
+    
+    /**
+     * Port where arduino has been connected.
+     */
+    private String arduinoPort;
     
     
     /**
@@ -39,7 +53,79 @@ public class KeyBoard implements KeyListener{
     public KeyBoard(){
         keys_pressed = new boolean[16]; //16 keys, 0-F
         numPressedKeys = 0;
+        sp = null;
+        arduinoPort = null;      
+        
+        System.out.println("[Chip8] Arduino keyboard not added");               
     }
+    
+    /**
+     * Constructor - Initualizes the keyboard (supports Arduino KeyPad).
+     * @param arduinoPort Port where arduino has been conected.
+     */
+    public KeyBoard(String arduinoPort){
+        keys_pressed = new boolean[16]; //16 keys, 0-F
+        numPressedKeys = 0;
+        this.arduinoPort = arduinoPort;
+        
+        if(initializeArduino()){
+                System.out.println("[Chip8] Arduino keyboard added");
+        }else{
+            System.out.println("[Chip8] Arduino keyboard can not be added");
+        }
+    }
+    
+    
+    /**
+     * Initializes Serial Port to receive arduino data.
+     */
+    private boolean initializeArduino(){
+        sp = SerialPort.getCommPort(arduinoPort);
+        sp.setComPortParameters(9600, 8, 1, 0);
+
+        if(sp.openPort()){
+            System.out.println("[Chip8] Arduino port oppened succesfully");
+            
+            sp.addDataListener(new SerialPortDataListener() {
+                @Override
+                public int getListeningEvents() {
+                    return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+                }
+
+                @Override
+                public void serialEvent(SerialPortEvent event) {
+                    if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                        return;
+                    
+                    byte[] newData = new byte[sp.bytesAvailable()];
+                    int numBytes = sp.readBytes(newData, newData.length);   
+                    if(numBytes == 1){
+                        byte data = newData[0];                   
+                        
+                        if(data <= 'F'){
+                            //Pressed
+                            if(setArduinoKeyTo(data, true)){
+                                numPressedKeys++;
+                            }
+                            
+                        }else{
+                            //Released 
+                            if(setArduinoKeyTo(data-'0', false)){
+                                numPressedKeys--;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return true;
+        }else{
+            System.out.println("[Chip8] Can not open arduino port");
+            return false;
+        }
+        
+    }
+    
     
     /**
      * Returns if the key is pressed or not.
@@ -49,6 +135,7 @@ public class KeyBoard implements KeyListener{
     public boolean isPressed(byte key){
         return this.keys_pressed[key];
     }
+    
     
     /**
      * Waits for a key to be pressed and returns it.
@@ -65,6 +152,10 @@ public class KeyBoard implements KeyListener{
     }
     
     
+    /**
+     * Sets the key pressed to true;
+     * @param e 
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         if(setKeyTo(e.getKeyCode(), true)){
@@ -72,12 +163,18 @@ public class KeyBoard implements KeyListener{
         }
     }
 
+    
+    /**
+     * Sets the key released to false;
+     * @param e 
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         if(setKeyTo(e.getKeyCode(), false)){
             numPressedKeys--;
         }
     }
+    
     
     /**
      * Sets the key "key" to true if pressed and false if released.
@@ -171,6 +268,91 @@ public class KeyBoard implements KeyListener{
         }
         return true;
     }
+    
+    
+    /**
+     * Sets the key "key" to true or false.
+     * As there is not key pressed/released with serial input, it sets the key
+     * as pressed if it was false (not pressed) and sets the key as not pressed
+     * if it was true (pressed).
+     * @param key
+     * @return 
+     */
+    private boolean setArduinoKeyTo(int key, boolean pressedOrReleased){
+        byte newKey; 
+        switch(key){
+            case KeyEvent.VK_1:
+                newKey = 0x1;
+              break;
+                
+            case KeyEvent.VK_2:
+                newKey = 0x2;
+              break;
+
+            case KeyEvent.VK_3:
+                newKey = 0x3;
+              break;
+
+            case KeyEvent.VK_4:
+                newKey = 0x4;
+              break;
+              
+            case KeyEvent.VK_5:
+                newKey = 0x5;
+              break;
+              
+            case KeyEvent.VK_6:
+                newKey = 0x6;
+              break;
+              
+            case KeyEvent.VK_7:
+                newKey = 0x7;
+              break;
+              
+            case KeyEvent.VK_8:
+                newKey = 0x8;
+              break;
+              
+            case KeyEvent.VK_9:
+                newKey = 0x9;
+              break;
+              
+            case KeyEvent.VK_0:
+                newKey = 0x0;
+              break;  
+              
+            case KeyEvent.VK_A:
+                newKey = 0xA;
+              break; 
+              
+            case KeyEvent.VK_B:
+                newKey = 0xB;
+              break; 
+            
+            case KeyEvent.VK_C:
+                newKey = 0xC;
+              break; 
+            
+            case KeyEvent.VK_D:
+                newKey = 0xD;
+              break; 
+            
+            case KeyEvent.VK_E:
+                newKey = 0xE;
+              break; 
+            
+            case KeyEvent.VK_F:
+                newKey = 0xF;
+              break; 
+              
+            default: return false; 
+        }
+        
+        keys_pressed[newKey] = pressedOrReleased;
+        lastPressed = newKey;
+        return true;
+    }
+    
     
     @Override
     public void keyTyped(KeyEvent e) {}
