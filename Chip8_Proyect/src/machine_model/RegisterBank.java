@@ -1,4 +1,4 @@
-package machine;
+package machine_model;
 
 /**
  * Class that manages al registers.
@@ -16,12 +16,17 @@ public class RegisterBank {
      * Contructor - Initializes the register bank.
      */
     public RegisterBank(){
+        this.resetRegisterBank();
+    }
+    
+    
+    public void resetRegisterBank(){
         V = new byte[16];
         I = 0x0000;
         PC = 0x200; //PC starts at 512 = 0x200
         SP = 0x00;
         DT = 0x00;
-        ST = 0x00;        
+        ST = 0x00; 
     }
     
     /**

@@ -1,4 +1,4 @@
-package inputOutput;
+package machine_model.inputOutput;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

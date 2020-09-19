@@ -1,4 +1,4 @@
-package inputOutput;
+package machine_model.inputOutput;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;

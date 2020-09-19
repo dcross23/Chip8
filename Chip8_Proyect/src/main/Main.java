@@ -1,9 +1,6 @@
 package main;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import machine.Chip8;
+import controller.Chip8Controller;
 
 /**
  *
@@ -14,19 +11,9 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        String rom = "PONG";     
-        String arduinoPort = "COM3";
-        
-        try {
-            Chip8 chip8 = new Chip8(arduinoPort);
-            chip8.loadRom(rom);
-            
-            chip8.startEmulationLoop();
-            
-        } catch (IOException | InterruptedException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static void main(String[] args) {       
+        //Chip8Controller controller = new Chip8Controller("COM3");
+        Chip8Controller controller = new Chip8Controller();
     }
     
 }

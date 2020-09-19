@@ -1,6 +1,6 @@
-package machine;
+package machine_model;
 
-import inputOutput.KeyBoard;
+import machine_model.inputOutput.KeyBoard;
 import java.util.Random;
 
 /**
@@ -29,6 +29,7 @@ public class CPU {
      * Constructor - Creates a new CPU with a Memory, a Register Bank and a KeyBoard.
      * @param memory
      * @param registerBank 
+     * @param keyboard 
      */
     public CPU(Memory memory, RegisterBank registerBank, KeyBoard keyboard){
         this.regBank = registerBank;
