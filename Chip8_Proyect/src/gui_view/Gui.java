@@ -6,9 +6,11 @@
 package gui_view;
 
 import controller.Chip8Controller;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -47,7 +49,15 @@ public class Gui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        OptionsError = new javax.swing.JLabel();
+        OptionsPanel = new javax.swing.JPanel();
+        ArduinoPort = new javax.swing.JLabel();
+        ChangePortButton = new javax.swing.JLabel();
+        ArduinoOnOff = new javax.swing.JLabel();
+        CloseOptions = new javax.swing.JLabel();
         SoundOnOff = new javax.swing.JLabel();
+        Options = new javax.swing.JLabel();
+        SelectOptionIcon = new javax.swing.JLabel();
         RomError = new javax.swing.JLabel();
         StartStopButton = new javax.swing.JLabel();
         StartStopIcon = new javax.swing.JLabel();
@@ -62,8 +72,67 @@ public class Gui extends javax.swing.JFrame {
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOffNoSelected.png"))); // NOI18N
-        SoundOnOff.setPreferredSize(new java.awt.Dimension(54, 24));
+        OptionsError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OptionsError.png"))); // NOI18N
+        getContentPane().add(OptionsError, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 130, -1, -1));
+        OptionsError.setVisible(false);
+
+        OptionsPanel.setEnabled(false);
+        OptionsPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                OptionsPanelMouseDragged(evt);
+            }
+        });
+        OptionsPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                OptionsPanelMousePressed(evt);
+            }
+        });
+        OptionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        ArduinoPort.setFont(new java.awt.Font("Minercraftory", 0, 14)); // NOI18N
+        ArduinoPort.setForeground(new java.awt.Color(255, 255, 255));
+        ArduinoPort.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ArduinoPort.setPreferredSize(new java.awt.Dimension(118, 28));
+        ArduinoPort.setRequestFocusEnabled(false);
+        OptionsPanel.add(ArduinoPort, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 157, -1, -1));
+
+        ChangePortButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/ChangePortButton.png"))); // NOI18N
+        ChangePortButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ChangePortButtonMouseClicked(evt);
+            }
+        });
+        OptionsPanel.add(ChangePortButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 160, -1, -1));
+
+        ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png"))); // NOI18N
+        ArduinoOnOff.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ArduinoOnOffMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ArduinoOnOffMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ArduinoOnOffMouseExited(evt);
+            }
+        });
+        OptionsPanel.add(ArduinoOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(181, 111, -1, -1));
+
+        CloseOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/CloseOptions.png"))); // NOI18N
+        CloseOptions.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CloseOptionsMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                CloseOptionsMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                CloseOptionsMouseExited(evt);
+            }
+        });
+        OptionsPanel.add(CloseOptions, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 10, -1, -1));
+
+        SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png"))); // NOI18N
         SoundOnOff.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 SoundOnOffMouseClicked(evt);
@@ -75,7 +144,27 @@ public class Gui extends javax.swing.JFrame {
                 SoundOnOffMouseExited(evt);
             }
         });
-        getContentPane().add(SoundOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(889, 98, -1, -1));
+        OptionsPanel.add(SoundOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(181, 62, -1, -1));
+
+        Options.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/Options.png"))); // NOI18N
+        OptionsPanel.add(Options, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        getContentPane().add(OptionsPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 90, -1, -1));
+        this.OptionsPanel.setVisible(false);
+
+        SelectOptionIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/Selection.png"))); // NOI18N
+        SelectOptionIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SelectOptionIconMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SelectOptionIconMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SelectOptionIconMouseExited(evt);
+            }
+        });
+        getContentPane().add(SelectOptionIcon, new org.netbeans.lib.awtextra.AbsoluteConstraints(912, 98, -1, -1));
 
         RomError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/RomError.png"))); // NOI18N
         RomError.setVisible(false);
@@ -190,6 +279,9 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_FondoMouseDragged
 
     private void CloseIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseIconMouseClicked
+        if(controller.isArduinoConnected())
+            controller.removeArduino();
+        
         controller.stopEmulation();
         //Wait for the loop thread to finish
         if(loopThread != null){
@@ -259,6 +351,7 @@ public class Gui extends javax.swing.JFrame {
             this.hasStarted = false;
             controller.stopEmulation();
             RomError.setVisible(false);
+            OptionsError.setVisible(false);
             
         }else{
             StartStopIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/StopIcon.png")));
@@ -272,36 +365,118 @@ public class Gui extends javax.swing.JFrame {
     private void SoundOnOffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SoundOnOffMouseClicked
         if(controller.isSoundOn()){
             controller.setSoundOn(false);
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOffSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
         }else{
             controller.setSoundOn(true);
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOnSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
         }
     }//GEN-LAST:event_SoundOnOffMouseClicked
 
     private void SoundOnOffMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SoundOnOffMouseEntered
         if(controller.isSoundOn()){
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOnSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
         }else{
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOffSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
         }
     }//GEN-LAST:event_SoundOnOffMouseEntered
 
     private void SoundOnOffMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SoundOnOffMouseExited
         if(controller.isSoundOn()){
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOnNoSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnNoSelected.png")));
         }else{
-            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/SoundOffNoSelected.png")));
+            SoundOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png")));
         }
     }//GEN-LAST:event_SoundOnOffMouseExited
 
+    private void SelectOptionIconMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SelectOptionIconMouseEntered
+        SelectOptionIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/Selection2.png")));
+    }//GEN-LAST:event_SelectOptionIconMouseEntered
+
+    private void SelectOptionIconMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SelectOptionIconMouseExited
+        SelectOptionIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/Selection.png")));
+    }//GEN-LAST:event_SelectOptionIconMouseExited
+
+    private void SelectOptionIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SelectOptionIconMouseClicked
+        if(!controller.isChip8Working()){
+            this.OptionsPanel.setEnabled(true);
+            this.OptionsPanel.setVisible(true);
+        }else{
+            OptionsError.setVisible(true);
+        }
+    }//GEN-LAST:event_SelectOptionIconMouseClicked
+
+    private void OptionsPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OptionsPanelMouseDragged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_OptionsPanelMouseDragged
+
+    private void OptionsPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OptionsPanelMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_OptionsPanelMousePressed
+
+    private void CloseOptionsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseOptionsMouseEntered
+        CloseOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/CloseOptions2.png")));
+    }//GEN-LAST:event_CloseOptionsMouseEntered
+
+    private void CloseOptionsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseOptionsMouseExited
+        CloseOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/CloseOptions.png")));
+    }//GEN-LAST:event_CloseOptionsMouseExited
+
+    private void CloseOptionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseOptionsMouseClicked
+        this.OptionsPanel.setVisible(false);
+        this.OptionsPanel.setEnabled(false);
+    }//GEN-LAST:event_CloseOptionsMouseClicked
+
+    private void ArduinoOnOffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ArduinoOnOffMouseClicked
+        if(controller.isArduinoConnected()){
+            if(controller.removeArduino()){
+                ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
+            }    
+        }else{
+            if(controller.activateArduino(arduinoPort)){
+                ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
+            }
+        }
+    }//GEN-LAST:event_ArduinoOnOffMouseClicked
+
+    private void ArduinoOnOffMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ArduinoOnOffMouseEntered
+        if(controller.isArduinoConnected()){
+            ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
+        }else{
+            ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
+        }
+    }//GEN-LAST:event_ArduinoOnOffMouseEntered
+
+    private void ArduinoOnOffMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ArduinoOnOffMouseExited
+        if(controller.isArduinoConnected()){
+            ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnNoSelected.png")));
+        }else{
+            ArduinoOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png")));
+        }
+    }//GEN-LAST:event_ArduinoOnOffMouseExited
+
+    private void ChangePortButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ChangePortButtonMouseClicked
+        String showInputDialog = JOptionPane.showInputDialog("Insert new port:");
+        if(showInputDialog != null && !showInputDialog.isBlank()){
+            this.arduinoPort = showInputDialog;
+            this.ArduinoPort.setText(this.arduinoPort);
+        }
+    }//GEN-LAST:event_ChangePortButtonMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ArduinoOnOff;
+    private javax.swing.JLabel ArduinoPort;
+    private javax.swing.JLabel ChangePortButton;
     private javax.swing.JLabel CloseIcon;
+    private javax.swing.JLabel CloseOptions;
     private javax.swing.JLabel Fondo;
+    private javax.swing.JLabel Options;
+    private javax.swing.JLabel OptionsError;
+    private javax.swing.JPanel OptionsPanel;
     private javax.swing.JLabel RomError;
     private javax.swing.JLabel RomLabel;
     public javax.swing.JPanel Screen;
+    private javax.swing.JLabel SelectOptionIcon;
     private javax.swing.JLabel SelectRomIcon;
     private javax.swing.JLabel SoundOnOff;
     private javax.swing.JLabel StartStopButton;
@@ -315,7 +490,8 @@ public class Gui extends javax.swing.JFrame {
     Runnable loopThreadTask;
     
     int xLast,yLast; //To move the window
-    public String romPath = "ROMS/PONG";
+    String romPath = "ROMS/PONG";
+    String arduinoPort = "";
     boolean hasStarted = false;
     // End of my variables
     

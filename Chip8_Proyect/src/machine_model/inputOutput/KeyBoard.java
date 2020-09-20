@@ -45,6 +45,7 @@ public class KeyBoard implements KeyListener{
      * Port where arduino has been connected.
      */
     private String arduinoPort;
+    private boolean isArduinoConnected;
     
     
     /**
@@ -55,77 +56,111 @@ public class KeyBoard implements KeyListener{
         numPressedKeys = 0;
         sp = null;
         arduinoPort = null;      
-        
+        isArduinoConnected = false;
         System.out.println("[Chip8] Arduino keyboard not added");               
-    }
+    }    
     
     /**
-     * Constructor - Initualizes the keyboard (supports Arduino KeyPad).
-     * @param arduinoPort Port where arduino has been conected.
-     */
-    public KeyBoard(String arduinoPort){
-        keys_pressed = new boolean[16]; //16 keys, 0-F
-        numPressedKeys = 0;
-        this.arduinoPort = arduinoPort;
-        
-        if(initializeArduino()){
-                System.out.println("[Chip8] Arduino keyboard added");
-        }else{
-            System.out.println("[Chip8] Arduino keyboard can not be added");
-        }
-    }
-    
-    
-    /**
-     * Initializes Serial Port to receive arduino data.
-     */
-    private boolean initializeArduino(){
-        sp = SerialPort.getCommPort(arduinoPort);
-        sp.setComPortParameters(9600, 8, 1, 0);
+     * Initializes Serial Port to receive arduino data. 
+     * @return 
+     */    
+    public boolean openArduinoPort(){
+        if(arduinoPort != null && !arduinoPort.isEmpty() && !arduinoPort.isBlank()){
+            sp = SerialPort.getCommPort(arduinoPort);
+            sp.setComPortParameters(9600, 8, 1, 0);
+            if(sp.openPort()){
+                System.out.println("[Chip8] Arduino port oppened succesfully");
 
-        if(sp.openPort()){
-            System.out.println("[Chip8] Arduino port oppened succesfully");
-            
-            sp.addDataListener(new SerialPortDataListener() {
-                @Override
-                public int getListeningEvents() {
-                    return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-                }
+                sp.addDataListener(new SerialPortDataListener() {
+                    @Override
+                    public int getListeningEvents() {
+                        return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+                    }
 
-                @Override
-                public void serialEvent(SerialPortEvent event) {
-                    if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
-                        return;
-                    
-                    byte[] newData = new byte[sp.bytesAvailable()];
-                    int numBytes = sp.readBytes(newData, newData.length);   
-                    if(numBytes == 1){
-                        byte data = newData[0];                   
-                        
-                        if(data <= 'F'){
-                            //Pressed
-                            if(setArduinoKeyTo(data, true)){
-                                numPressedKeys++;
-                            }
-                            
-                        }else{
-                            //Released 
-                            if(setArduinoKeyTo(data-'0', false)){
-                                numPressedKeys--;
+                    @Override
+                    public void serialEvent(SerialPortEvent event) {
+                        if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                            return;
+
+                        byte[] newData = new byte[sp.bytesAvailable()];
+                        int numBytes = sp.readBytes(newData, newData.length);   
+                        if(numBytes == 1){
+                            byte data = newData[0];                   
+
+                            if(data <= 'F'){
+                                //Pressed
+                                if(setArduinoKeyTo(data, true)){
+                                    numPressedKeys++;
+                                }
+
+                            }else{
+                                //Released 
+                                if(setArduinoKeyTo(data-'0', false)){
+                                    numPressedKeys--;
+                                }
                             }
                         }
                     }
-                }
-            });
+                    
+                    
+                });
+                isArduinoConnected = true;
+                System.out.println("[Chip8] Arduino keyboard added");
+                return true;
             
-            return true;
+            }else{
+                isArduinoConnected = false;
+                System.out.println("[Chip8] Can not open arduino port:"+arduinoPort);
+                System.out.println("[Chip8] Arduino keyboard can not be added");
+                return false;
+            }
+            
         }else{
-            System.out.println("[Chip8] Can not open arduino port");
+            System.out.println("[Chip8] Arduino port not added");
             return false;
         }
-        
     }
     
+    /**
+     * Closes Serial Port if it was opened.
+     * @return 
+     */
+    public boolean closeArduinoPort(){
+        if(sp.isOpen()){
+            if(sp.closePort()){
+                isArduinoConnected = false;
+                System.out.println("[Chip8] Arduino keyboard removed");
+                return true;
+            }else{
+                System.out.println("[Chip8] Can not close arduino port");
+                return false;
+            }
+        }else{
+            System.out.println("[Chip8] Arduino port is not open");
+            System.out.println("[Chip8] Can not close arduino port");
+            return false;
+        }
+    }
+    
+    /**
+     * Sets a new arduino port.
+     * @param newPort 
+     */
+    public void setArduinoPort(String newPort){
+        this.arduinoPort = newPort;
+    }
+    
+    /**
+     * Returns arduino port.
+     * @return 
+     */
+    public String getArduinoPort(){
+        return this.arduinoPort;
+    }
+    
+    public boolean isArduinoConnected(){
+        return this.isArduinoConnected;
+    }
     
     /**
      * Returns if the key is pressed or not.

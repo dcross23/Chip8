@@ -26,15 +26,7 @@ public class Chip8Controller {
         gui = new Gui(this);  
         gui.setVisible(true);     
         System.out.println("[CHIP-8] Chip-8 system correctly initialized.");
-    }
-    
-    public Chip8Controller(String arduinoPort){
-        chip8 = new Chip8(arduinoPort);  
-        gui = new Gui(this);  
-        gui.setVisible(true);     
-        System.out.println("[CHIP-8] Chip-8 system correctly initialized.");
-    }
-    
+    }    
     
     public void startEmulation(){
         this.chip8.startEmulationLoop();
@@ -48,6 +40,18 @@ public class Chip8Controller {
     public void loadRom(String rom){
         this.chip8.setRom(rom);
         this.chip8.loadRom();
+    }
+    
+    public boolean activateArduino(String port){
+        return this.chip8.addArduinoKeypad(port);
+    }
+    
+    public boolean removeArduino(){
+        return this.chip8.removeArduinoKeypad();
+    }
+    
+    public boolean isArduinoConnected(){
+        return this.chip8.isArduinoConnected();
     }
     
    

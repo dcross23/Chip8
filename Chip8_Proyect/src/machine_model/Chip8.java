@@ -75,20 +75,6 @@ public class Chip8 {
         this.screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);
         System.out.println("[CHIP-8] Chip-8 components correctly initialized.");       
     }
-    
-    /**
-     * Constructor - Creates Chip8 supporting Arduino Keypad input.
-     * @param arduinoPort Port where Arduino has been conected
-     */
-    public Chip8(String arduinoPort){
-        this.memory = new Memory(MEMSIZE);
-        this.registerBank = new RegisterBank();
-        this.keyboard = new KeyBoard(arduinoPort);    
-        this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
-        this.sound = new Sound(false);
-        this.screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);
-        System.out.println("[CHIP-8] Chip-8 components correctly initialized.");        
-    }    
   
     /**
      * Loads a binary rom 
@@ -172,6 +158,18 @@ public class Chip8 {
         this.registerBank.resetRegisterBank();
     }
     
+    public boolean addArduinoKeypad(String port){
+        this.keyboard.setArduinoPort(port);
+        return this.keyboard.openArduinoPort();
+    }
+    
+    public boolean removeArduinoKeypad(){
+        return this.keyboard.closeArduinoPort();
+    }
+    
+    public boolean isArduinoConnected(){
+        return this.keyboard.isArduinoConnected();
+    }
     
     /**
      * Print loaded rom from 0x200 to romSize.
