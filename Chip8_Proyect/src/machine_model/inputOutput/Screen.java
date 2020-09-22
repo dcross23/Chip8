@@ -1,10 +1,10 @@
-package inputOutput;
+package machine_model.inputOutput;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
-import machine.Memory;
+import machine_model.Memory;
 
 /**
  *
@@ -42,9 +42,7 @@ public class Screen extends JPanel{
         this.width = width;
         this.height = height;
         
-        setBackground(new Color(20,27,140)); //Blue screen
         setPreferredSize(new Dimension(width, height));
-        setBounds(0, 0, width, height);
     }
     
     /**

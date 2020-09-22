@@ -1,14 +1,13 @@
-package machine;
+package machine_model;
 
-import inputOutput.KeyBoard;
-import inputOutput.Screen;
-import inputOutput.Sound;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import machine_model.inputOutput.KeyBoard;
+import machine_model.inputOutput.Screen;
+import machine_model.inputOutput.Sound;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import javax.swing.JFrame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,18 +40,28 @@ public class Chip8 {
      * Posibility to add Arduino keypad as keyboard.
      */
     private KeyBoard keyboard;
-    private boolean addArduino = true;
     
     /**
      * Chip8 sound.
      */
     private Sound sound;
-    private boolean soundOn = false;
     
     /**
      * Size of the loaded rom.
      */
     private int romSize;
+    private String rom;
+    private boolean hasLoadedARom = false;
+    
+    /**
+     * Say if startEmulationLoop function is working.
+     */
+    public boolean isWorking = false;
+    
+    /**
+     * Says when chip8 has to stop emulation loop.
+     */
+    private boolean mustQuit = false;
         
     /**
      * Constructor - Creates Chip8.
@@ -61,85 +70,45 @@ public class Chip8 {
         this.memory = new Memory(MEMSIZE);
         this.registerBank = new RegisterBank();
         this.keyboard = new KeyBoard();    
-        this.sound = new Sound(soundOn);
         this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
-        System.out.println("[CHIP-8] Chip-8 components correctly initialized.");
-        
-        createGUI();
-        
-        System.out.println("[CHIP-8] Chip-8 system correctly initialized.");
+        this.sound = new Sound(false);
+        this.screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);
+        System.out.println("[CHIP-8] Chip-8 components correctly initialized.");       
     }
-    
-    /**
-     * Constructor - Creates Chip8 supporting Arduino Keypad input.
-     * @param arduinoPort Port where Arduino has been conected
-     */
-    public Chip8(String arduinoPort){
-        this.memory = new Memory(MEMSIZE);
-        this.registerBank = new RegisterBank();
-        this.keyboard = new KeyBoard(arduinoPort);    
-        this.sound = new Sound(soundOn);
-        this.cpu = new CPU(this.memory, this.registerBank, this.keyboard); 
-        System.out.println("[CHIP-8] Chip-8 components correctly initialized.");
-        
-        createGUI();
-        
-        System.out.println("[CHIP-8] Chip-8 system correctly initialized.");
-    }
-    
-     /**
-     * Creates and initializes Chip8 screen.
-     */
-    private void createGUI(){
-        JFrame frame = new JFrame("Chip-8");
-        
-        //Add keyboard as key listener
-        frame.addKeyListener(keyboard);
-        
-        // Set frame location to the middle of the screen
-        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(d.width/2 - SCREEN_WIDTH/2, d.height/2 - SCREEN_HEIGHT/2);
-        
-        // New Screen pannel instance 
-        screen = new Screen(memory, SCALE, SCREEN_WIDTH, SCREEN_HEIGHT);  
-        frame.setContentPane(screen);
-        frame.pack();
-        
-        // Other frame options
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setVisible(true);
-        
-        System.out.println("[CHIP-8] Chip-8 GUI correctly initialized.");
-    }
-    
   
     /**
      * Loads a binary rom 
-     * @param rom To load
-     * @throws java.io.IOException
      */
-    public void loadRom(String rom) throws IOException{
-        File f = new File("ROMS/"+rom);
-        byte[] loadedRom = Files.readAllBytes(f.toPath());
-        this.romSize = loadedRom.length;
+    public void loadRom(){
+        File f = new File(this.rom);
+        byte[] loadedRom;
+        try {
+            loadedRom = Files.readAllBytes(f.toPath());
+            this.romSize = loadedRom.length;
         
-        //Starts to load in 0x200 (where PC starts)
-        short addressToLoad = 0x200; 
-        for(byte b: loadedRom){
-            this.memory.set(addressToLoad, b);
-            addressToLoad += 0x1;
+            //Starts to load in 0x200 (where PC starts)
+            short addressToLoad = 0x200; 
+            for(byte b: loadedRom){
+                this.memory.set(addressToLoad, b);
+                addressToLoad += 0x1;
+                if(addressToLoad > 0xFFF){
+                    break;
+                }
+            }
+        
+        } catch (IOException ex) {
+            Logger.getLogger(Chip8.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }       
+    }
     
     /**
      * Chip8 main loop.
-     * @throws InterruptedException 
      */
-    public void startEmulationLoop() throws InterruptedException{        
+    public void startEmulationLoop(){    
+        this.isWorking = true;
         long time = System.currentTimeMillis();
-        
-        while(true){
+        mustQuit = false;
+        while(!mustQuit){
             
             //1.- Fetch (Load instruction from memory according to PC)
             cpu.getNextOpcode();
@@ -174,11 +143,34 @@ public class Chip8 {
                 time = System.currentTimeMillis();
             }
             
-            Thread.sleep(1);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Chip8.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        this.isWorking = false;
     }
    
-
+    public void stopEmulationLoop(){
+        this.mustQuit = true;
+        this.memory.resetMemory(MEMSIZE);
+        this.registerBank.resetRegisterBank();
+    }
+    
+    public boolean addArduinoKeypad(String port){
+        this.keyboard.setArduinoPort(port);
+        return this.keyboard.openArduinoPort();
+    }
+    
+    public boolean removeArduinoKeypad(){
+        return this.keyboard.closeArduinoPort();
+    }
+    
+    public boolean isArduinoConnected(){
+        return this.keyboard.isArduinoConnected();
+    }
+    
     /**
      * Print loaded rom from 0x200 to romSize.
      */
@@ -203,5 +195,32 @@ public class Chip8 {
      */
     public void printRegisterBank(){
         registerBank.printRegisterBank();
+    }
+
+    
+    //GETTERS AND SETTERS.
+    public Memory getMemory() {
+        return this.memory;
+    }
+    public RegisterBank getRegisterBank() {
+        return this.registerBank;
+    }
+    public CPU getCpu() {
+        return this.cpu;
+    }
+    public Screen getScreen() {
+        return this.screen;
+    }
+    public KeyBoard getKeyboard() {
+        return this.keyboard;
+    }
+    public void setRom(String rom){
+        this.rom = rom;
+    }
+    public void setSoundTo(boolean onOff){
+        this.sound.setEnabled(onOff);
+    }
+    public boolean isSoundOn(){
+        return this.sound.isEnabled();
     }
 }

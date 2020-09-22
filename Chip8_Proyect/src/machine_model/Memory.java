@@ -1,4 +1,4 @@
-package machine;
+package machine_model;
 
 /**
  * Class that manages the memory.
@@ -8,12 +8,12 @@ public class Memory {
     /**
      * Memory. 
      */
-    private final byte[] mem;
+    private byte[] mem;
     
     /**
      * Stack. 
      */
-    private final short[] stack;
+    private short[] stack;
     
     /**
      * Screen pixels : true = white, false = black.
@@ -54,6 +54,10 @@ public class Memory {
      * @param size 
      */
     public Memory(int size){
+        this.resetMemory(size);
+    }
+    
+    public void resetMemory(int size){
         this.mem = new byte[size];
         this.stack = new short[16];
         this.pixels = new boolean[64][32];
@@ -61,6 +65,7 @@ public class Memory {
         
         loadSpritesOnMemory();
     }
+    
     
     /**
      * Returns the head of the stack.
