@@ -54,7 +54,7 @@ public class Chip8Controller {
         return this.chip8.isArduinoConnected();
     }
     
-   
+    
     public Memory getMemory() {
         return chip8.getMemory();
     }

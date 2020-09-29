@@ -1,5 +1,7 @@
 package machine_model;
 
+import javax.swing.JTextArea;
+
 /**
  * Class that manages the memory.
  * @author David
@@ -116,14 +118,24 @@ public class Memory {
     }
     
     /**
-     * Prints the memory content and addresses. 
+     * Returns a string representation of the memory
+     * content and addresses
+     * @return 
      */
-    public void printMemory(){
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("    %7s    |    %7s\n","ADDRESS","CONTENT"));
+        sb.append("-----------------------------------------\n");
         for(int i=0; i<this.mem.length; i++){
-            System.out.printf("%02x -> 0x%04x\n",this.mem[i],i);
+            String address = " 0x" + String.format("%04x ",i).toUpperCase();
+            String content = String.format("%02x", this.mem[i]);
+            
+            sb.append(String.format("    %7s        |    %7s\n", address,content));
         }
+        
+        return sb.toString();
     }
-    
     
     /**
      * Loads the default sprites in memory. 

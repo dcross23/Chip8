@@ -6,7 +6,8 @@
 package gui_view;
 
 import controller.Chip8Controller;
-import java.awt.event.KeyEvent;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -49,8 +50,17 @@ public class Gui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        MemFrame = new javax.swing.JFrame();
+        ScrollMemFrame = new javax.swing.JScrollPane();
+        MemoryText = new javax.swing.JTextPane();
+        MFBackground = new javax.swing.JLabel();
+        RegBankFrame = new javax.swing.JFrame();
+        ScrollRBFrame = new javax.swing.JScrollPane();
+        RegBankText = new javax.swing.JTextPane();
+        RBFBackground = new javax.swing.JLabel();
         OptionsError = new javax.swing.JLabel();
         OptionsPanel = new javax.swing.JPanel();
+        DebuggerOnOff = new javax.swing.JLabel();
         ArduinoPort = new javax.swing.JLabel();
         ChangePortButton = new javax.swing.JLabel();
         ArduinoOnOff = new javax.swing.JLabel();
@@ -67,7 +77,76 @@ public class Gui extends javax.swing.JFrame {
         Screen = controller.getScreen();
         Fondo = new javax.swing.JLabel();
 
+        MemFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        MemFrame.setBackground(new java.awt.Color(102, 255, 102));
+        MemFrame.setName("MemFrame"); // NOI18N
+        MemFrame.setUndecorated(true);
+        MemFrame.setResizable(false);
+        MemFrame.setPreferredSize(new Dimension(200,720));
+        MemFrame.setSize(MemFrame.getPreferredSize());
+        MemFrame.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                MemFrameMouseDragged(evt);
+            }
+        });
+        MemFrame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                MemFrameMousePressed(evt);
+            }
+        });
+        MemFrame.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        MemFrame.setVisible(false);
+
+        ScrollMemFrame.setPreferredSize(new Dimension(MemFrame.getPreferredSize().width-10, MemFrame.getPreferredSize().height-45));
+
+        MemoryText.setBackground(new java.awt.Color(0, 0, 0));
+        MemoryText.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        MemoryText.setForeground(new java.awt.Color(0, 255, 0));
+        MemoryText.setSelectedTextColor(new java.awt.Color(255, 0, 0));
+        MemoryText.setSelectionColor(new java.awt.Color(255, 255, 255));
+        MemoryText.setEditable(false);
+        ScrollMemFrame.setViewportView(MemoryText);
+
+        MemFrame.getContentPane().add(ScrollMemFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 40, -1, -1));
+
+        MFBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/MemFrameBackground.png"))); // NOI18N
+        MemFrame.getContentPane().add(MFBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        RegBankFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        RegBankFrame.setUndecorated(true);
+        RegBankFrame.setPreferredSize(new java.awt.Dimension(200, 720));
+        RegBankFrame.setSize(RegBankFrame.getPreferredSize());
+        RegBankFrame.setPreferredSize(new Dimension(200,720));
+        RegBankFrame.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                RegBankFrameMouseDragged(evt);
+            }
+        });
+        RegBankFrame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                RegBankFrameMousePressed(evt);
+            }
+        });
+        RegBankFrame.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        RegBankFrame.setVisible(false);
+
+        ScrollRBFrame.setPreferredSize(new Dimension(MemFrame.getPreferredSize().width-10, MemFrame.getPreferredSize().height-45));
+
+        RegBankText.setBackground(new java.awt.Color(0, 0, 0));
+        RegBankText.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        RegBankText.setForeground(new java.awt.Color(0, 255, 0));
+        RegBankText.setSelectedTextColor(new java.awt.Color(255, 0, 0));
+        RegBankText.setSelectionColor(new java.awt.Color(255, 255, 255));
+        RegBankText.setEditable(false);
+        ScrollRBFrame.setViewportView(RegBankText);
+
+        RegBankFrame.getContentPane().add(ScrollRBFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 40, -1, -1));
+
+        RBFBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/RBFBackground.png"))); // NOI18N
+        RegBankFrame.getContentPane().add(RBFBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setName("Principal"); // NOI18N
         setUndecorated(true);
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -88,6 +167,20 @@ public class Gui extends javax.swing.JFrame {
             }
         });
         OptionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png"))); // NOI18N
+        DebuggerOnOff.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DebuggerOnOffMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                DebuggerOnOffMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                DebuggerOnOffMouseExited(evt);
+            }
+        });
+        OptionsPanel.add(DebuggerOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 210, -1, -1));
 
         ArduinoPort.setFont(new java.awt.Font("Minercraftory", 0, 14)); // NOI18N
         ArduinoPort.setForeground(new java.awt.Color(255, 255, 255));
@@ -116,7 +209,7 @@ public class Gui extends javax.swing.JFrame {
                 ArduinoOnOffMouseExited(evt);
             }
         });
-        OptionsPanel.add(ArduinoOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(181, 111, -1, -1));
+        OptionsPanel.add(ArduinoOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 111, -1, -1));
 
         CloseOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/CloseOptions.png"))); // NOI18N
         CloseOptions.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -144,7 +237,7 @@ public class Gui extends javax.swing.JFrame {
                 SoundOnOffMouseExited(evt);
             }
         });
-        OptionsPanel.add(SoundOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(181, 62, -1, -1));
+        OptionsPanel.add(SoundOnOff, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 62, -1, -1));
 
         Options.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/Options.png"))); // NOI18N
         OptionsPanel.add(Options, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -279,6 +372,9 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_FondoMouseDragged
 
     private void CloseIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CloseIconMouseClicked
+        MemFrame.dispose();
+        RegBankFrame.dispose();
+        
         if(controller.isArduinoConnected())
             controller.removeArduino();
         
@@ -462,6 +558,99 @@ public class Gui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ChangePortButtonMouseClicked
 
+    private void DebuggerOnOffMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DebuggerOnOffMouseEntered
+        if(debugger){
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
+        }else{
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
+        }
+    }//GEN-LAST:event_DebuggerOnOffMouseEntered
+
+    private void DebuggerOnOffMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DebuggerOnOffMouseExited
+        if(debugger){
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnNoSelected.png")));
+        }else{
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffNoSelected.png")));
+        }
+    }//GEN-LAST:event_DebuggerOnOffMouseExited
+
+    private void DebuggerOnOffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DebuggerOnOffMouseClicked
+        if(!debugger){
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OnSelected.png")));
+            debugger = true;
+            
+            //In case the principal frame is parcially outside the window or close the border (30px difference),
+            // the new frame will be located at (0,y) in case is close to right/left border or (x,0) in case is 
+            // close to upper/down border
+            int x = this.getX() - MemFrame.getWidth();
+            int y = this.getY();
+            if(x<=30 || x>Toolkit.getDefaultToolkit().getScreenSize().width-30){
+                x = 0;
+            }
+            if(y<=30 || y>Toolkit.getDefaultToolkit().getScreenSize().height-30){
+                y = 0;
+            }
+            
+            MemoryText.selectAll();
+            MemoryText.replaceSelection("");
+            MemoryText.setText(controller.getMemory().toString());
+            //This sets the scroll pane in the start of the text
+            MemoryText.setSelectionStart(0);
+            MemoryText.setSelectionEnd(0);
+            
+            MemFrame.setLocation(x,y);
+            MemFrame.setVisible(true);
+            
+            
+            
+            x = this.getX() + this.getWidth();
+            y = this.getY();
+            if(x<=30 || x>Toolkit.getDefaultToolkit().getScreenSize().width-30){
+                x = Toolkit.getDefaultToolkit().getScreenSize().width - RegBankFrame.getWidth();
+            }
+            if(y<=30 || y>Toolkit.getDefaultToolkit().getScreenSize().height-30){
+                y = 0;
+            }
+            
+            RegBankText.selectAll();
+            RegBankText.replaceSelection("");
+            RegBankText.setText(controller.getRegisterBank().toString());
+            
+            RegBankFrame.setLocation(x, y);
+            RegBankFrame.setVisible(true);
+            
+        }else{
+            DebuggerOnOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui_view/icons/OffSelected.png")));
+            debugger = false;
+            MemFrame.setVisible(false);
+            RegBankFrame.setVisible(false);
+        }
+    }//GEN-LAST:event_DebuggerOnOffMouseClicked
+
+    private void MemFrameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MemFrameMousePressed
+        this.xLast2 = evt.getX();
+        this.yLast2 = evt.getY();
+    }//GEN-LAST:event_MemFrameMousePressed
+
+    private void MemFrameMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MemFrameMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        
+        MemFrame.setLocation(x-xLast2, y-yLast2);
+    }//GEN-LAST:event_MemFrameMouseDragged
+
+    private void RegBankFrameMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RegBankFrameMousePressed
+        xLast3 = evt.getX();
+        yLast3 = evt.getY();
+    }//GEN-LAST:event_RegBankFrameMousePressed
+
+    private void RegBankFrameMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RegBankFrameMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        
+        RegBankFrame.setLocation(x-xLast3, y-yLast3);
+    }//GEN-LAST:event_RegBankFrameMouseDragged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel ArduinoOnOff;
@@ -469,13 +658,22 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JLabel ChangePortButton;
     private javax.swing.JLabel CloseIcon;
     private javax.swing.JLabel CloseOptions;
+    private javax.swing.JLabel DebuggerOnOff;
     private javax.swing.JLabel Fondo;
+    private javax.swing.JLabel MFBackground;
+    private javax.swing.JFrame MemFrame;
+    private javax.swing.JTextPane MemoryText;
     private javax.swing.JLabel Options;
     private javax.swing.JLabel OptionsError;
     private javax.swing.JPanel OptionsPanel;
+    private javax.swing.JLabel RBFBackground;
+    private javax.swing.JFrame RegBankFrame;
+    private javax.swing.JTextPane RegBankText;
     private javax.swing.JLabel RomError;
     private javax.swing.JLabel RomLabel;
     public javax.swing.JPanel Screen;
+    private javax.swing.JScrollPane ScrollMemFrame;
+    private javax.swing.JScrollPane ScrollRBFrame;
     private javax.swing.JLabel SelectOptionIcon;
     private javax.swing.JLabel SelectRomIcon;
     private javax.swing.JLabel SoundOnOff;
@@ -489,10 +687,13 @@ public class Gui extends javax.swing.JFrame {
     Thread loopThread;
     Runnable loopThreadTask;
     
-    int xLast,yLast; //To move the window
+    int xLast,yLast;   //To move principal window
+    int xLast2,yLast2; //To move MemFrame
+    int xLast3,yLast3; //To move RegBankFrame
     String romPath = "ROMS/PONG";
     String arduinoPort = "";
     boolean hasStarted = false;
+    boolean debugger = false;
     // End of my variables
     
     

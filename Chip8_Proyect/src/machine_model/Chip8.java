@@ -5,6 +5,7 @@ import machine_model.inputOutput.Screen;
 import machine_model.inputOutput.Sound;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class Chip8 {
     /**
      * Says when chip8 has to stop emulation loop.
      */
-    private boolean mustQuit = false;
+    private boolean quit = false;
         
     /**
      * Constructor - Creates Chip8.
@@ -107,8 +108,9 @@ public class Chip8 {
     public void startEmulationLoop(){    
         this.isWorking = true;
         long time = System.currentTimeMillis();
-        mustQuit = false;
-        while(!mustQuit){
+        
+        quit = false;
+        while(!quit){
             
             //1.- Fetch (Load instruction from memory according to PC)
             cpu.getNextOpcode();
@@ -118,7 +120,7 @@ public class Chip8 {
 
             //3.- Decode instruction and execute it
             cpu.decode();
-
+            
             //4.- Update screen 
             if(memory.drawScreen){
                 screen.repaint();
@@ -149,11 +151,12 @@ public class Chip8 {
                 Logger.getLogger(Chip8.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
         this.isWorking = false;
     }
    
     public void stopEmulationLoop(){
-        this.mustQuit = true;
+        this.quit = true;
         this.memory.resetMemory(MEMSIZE);
         this.registerBank.resetRegisterBank();
     }
@@ -187,14 +190,14 @@ public class Chip8 {
      * Prints Memory content.
      */
     public void printMemory(){
-        memory.printMemory();
+        System.out.println(memory.toString());
     }
 
     /**
      * Prints Register Bank content.
      */
     public void printRegisterBank(){
-        registerBank.printRegisterBank();
+        System.out.println(registerBank.toString());
     }
 
     

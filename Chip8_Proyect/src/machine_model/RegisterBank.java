@@ -30,25 +30,32 @@ public class RegisterBank {
     }
     
     /**
-     * Prints the register bank by standar output (stdout).
+     * Returns a string representation of the register bank.
+     * @return 
      */
-    public void printRegisterBank(){
-        System.out.println("REGISTER BANK");
-        System.out.println("V={");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("V={\n");
         for(int i=0; i<16; i++){
             if(i >= 10)
-                System.out.printf("  V[%d] = 0x%02x\n",i,this.V[i]);
+                sb.append(String.format("  V[%d] = 0x%02x\n",i,this.V[i]));
             else
-                System.out.printf("  V[%d]  = 0x%02x\n",i,this.V[i]);
+                sb.append(String.format("  V[%d]  = 0x%02x\n",i,this.V[i]));
         }
-        System.out.println("}\n");
+        sb.append("}\n\n");
         
-        System.out.printf("I  = 0x%04x\n",this.I);
-        System.out.printf("PC = 0x%04x\n",this.PC);
-        System.out.printf("SP = 0x%02x\n",this.SP);
-        System.out.printf("DT = 0x%02x\n",this.DT);
-        System.out.printf("ST = 0x%02x\n",this.ST);        
+        sb.append(String.format("I  = 0x%04x\n",this.I));
+        sb.append(String.format("PC = 0x%04x\n",this.PC));
+        sb.append(String.format("SP = 0x%02x\n",this.SP));
+        sb.append(String.format("DT = 0x%02x\n",this.DT));
+        sb.append(String.format("ST = 0x%02x\n",this.ST)); 
+        
+        return sb.toString();
     }
+    
+    
+    
     
     
 }
